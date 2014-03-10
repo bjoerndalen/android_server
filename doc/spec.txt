@@ -1,0 +1,10 @@
+                           SERVER SPECIFICATION
+
+Server will extend Net::Server module. Class (Server) will
+implement handling of requests, store sessions etc.
+
+Main class (e.g. AndroidServer) will implement general functionality of
+the server, for each of the roles. Child classes (e.g. AndroidServer::Admin,
+AndroidServer::Teacher, AndroidServer::Student) will implement special functionality
+for each of roles. These classes should use DAO packages, which had been already
+implemented.

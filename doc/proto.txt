@@ -1,0 +1,16 @@
+                       PROTOCOL SPECIFICATION
+
+
+The protocol between server and client will use
+JSON format to send data and session information.
+
+Before an authorization server will send a list of
+supported services ( e.g. [ 'ADMIN', 'TEACHER', 'STUDENT' ] ).
+
+After successful authorization client will send requests with
+auth_id(UUID), method name and list of parameters.
+Server will send a single JSON object or a list of JSON objects to the
+client.
+
+Server will send JSON object with error field if an error occurred
+wile processing a request.
