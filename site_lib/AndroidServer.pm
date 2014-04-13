@@ -116,12 +116,12 @@ sub get_group_info {
 		$result->{success}
 		  ? $group = $result->{result}
 		  : Testing::VarRegistry::add_error( $result->{error} );
+		$result = {
+			i_group         => $i_group,
+			group_name      => $group->group_name(),
+			is_system_group => $group->is_system_group(),
+		};
 	}
-	$result = {
-		i_group         => $i_group,
-		group_name      => $group->group_name(),
-		is_system_group => $group->is_system_group(),
-	};
 	return $result;
 }
 
@@ -156,6 +156,71 @@ sub change_student_status {
 		if ( !$result->{success} ) {
 			Testing::VarRegistry::add_error( $result->{error} );
 		}
+	}
+	return $result;
+}
+
+sub delete_group {
+	my ( $self, $params ) = @_;
+	my $i_group = $params->{i_group};
+	my $result;
+	if ( defined $i_group ) {
+		$result = Testing::DAO::Group::find_by_id($i_group);
+		if ( !$result->{success} ) {
+			Testing::VarRegistry::add_error( $result->{error} );
+		}
+		if ( $result->{success} ) {
+			my $group = $result->{result};
+			$result = Testing::DAO::Group::remove($i_group);
+			if ( !$result->{success} ) {
+				Testing::VarRegistry::add_error( $result->{error} );
+			}
+		}
+	}
+	return $result;
+}
+
+sub edit_student {
+	my ( $self, $params ) = @_;
+	my $result =
+	  ( defined $params->{id} )
+	  ? Testing::DAO::Student::edit($params)
+	  : Testing::DAO::Student::add($params);
+	return $result;
+}
+
+sub get_group_count {
+	my $self = shift;
+	return Testing::DAO::Group::get_count();
+}
+
+sub get_student_info {
+	my ( $self, $params ) = @_;
+	my $i_student = $params->{i_student};
+	my $result;
+	if ( defined $i_student ) {
+		$result = Testing::DAO::Student::find_by_id($i_student);
+		if ( $result->{success} ) {
+			$result = {
+				login      => $result->{result}->login(),
+				first_name => $result->{result}->first_name(),
+				last_name  => $result->{result}->last_name(),
+				comments   => $result->{result}->comments(),
+				i_group    => $result->{result}->i_group()->id()
+			};
+		}
+		else {
+			Testing::VarRegistry::add_error( $result->{error} );
+		}
+	}
+	return $result;
+}
+
+sub edit_stud_passwd {
+	my ( $self, $params ) = @_;
+	my $result;
+	if ( defined $params->{id} && defined $params->{password} ) {
+		$result = Testing::DAO::Student::edit_password($params);
 	}
 	return $result;
 }
