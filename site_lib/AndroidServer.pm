@@ -39,7 +39,7 @@ sub get_groups_list {
 sub get_students_by_group {
 	my ( $self, $params ) = @_;
 	my $students_result = Testing::DAO::Student::get_students_by_group($params);
-    my @page_data_array;
+	my @page_data_array;
 	if ( defined $students_result->{result} ) {
 		@page_data_array = map( [
 				$_->login(),          $_->first_name(),
@@ -82,7 +82,6 @@ sub get_students_list {
 	return $result;
 }
 
-
 sub edit_group {
 	my ( $self, $params ) = @_;
 	my $i_group    = $params->{i_group};
@@ -104,35 +103,58 @@ sub edit_group {
 		  ? $i_group = $result->{result}
 		  : Testing::VarRegistry::add_error( $result->{error} );
 	}
+	return $result;
+}
 
-	my $group = undef;
+sub get_group_info {
+	my ( $self, $params ) = @_;
+	my $i_group = $params->{i_group};
+	my $group   = undef;
+	my $result;
 	if ( defined $i_group ) {
 		$result = Testing::DAO::Group::find_by_id($i_group);
 		$result->{success}
 		  ? $group = $result->{result}
 		  : Testing::VarRegistry::add_error( $result->{error} );
 	}
+	$result = {
+		i_group         => $i_group,
+		group_name      => $group->group_name(),
+		is_system_group => $group->is_system_group(),
+	};
+	return $result;
+}
 
-	if ( defined $i_student && defined $action ) {
-		if ( $action eq 'delete' ) {
-			$result = Testing::DAO::Student::remove($i_student);
-			if ( !$result->{success} ) {
-				Testing::VarRegistry::add_error( $result->{error} );
-			}
+sub delete_student {
+	my ( $self, $params ) = @_;
+	my $i_student = $params->{i_student};
+	my $result;
+	if ( defined $i_student ) {
+		$result = Testing::DAO::Student::remove($i_student);
+		if ( !$result->{success} ) {
+			Testing::VarRegistry::add_error( $result->{error} );
 		}
-		elsif ( $action eq 'block' || $action eq 'undo' ) {
-			$result = Testing::DAO::Student::find_by_id($i_student);
-			if ( !$result->{success} ) {
-				Testing::VarRegistry::add_error( $result->{error} );
-			}
-			my $student = $result->{result};
-			$result =
-			  $student->account_status() eq 'active'
-			  ? Testing::DAO::Student::block($i_student)
-			  : Testing::DAO::Student::unblock($i_student);
-			if ( !$result->{success} ) {
-				Testing::VarRegistry::add_error( $result->{error} );
-			}
+	}
+	return $result;
+}
+
+sub change_student_status {
+	my ( $self, $params ) = @_;
+	my $i_student = $params->{i_student};
+	my $action    = $params->{action};
+	my $result;
+	if ( $action eq 'block' || $action eq 'undo' ) {
+		$result = Testing::DAO::Student::find_by_id($i_student);
+		if ( !$result->{success} ) {
+			Testing::VarRegistry::add_error( $result->{error} );
+		}
+		my $student = $result->{result};
+		$result =
+		  $student->account_status() eq 'active'
+		  ? Testing::DAO::Student::block($i_student)
+		  : Testing::DAO::Student::unblock($i_student);
+		if ( !$result->{success} ) {
+			Testing::VarRegistry::add_error( $result->{error} );
 		}
 	}
 	return $result;
