@@ -5,7 +5,7 @@ use Mouse;
 use AndroidServer;
 use AndroidServer::Teacher;
 
-extends 'Net::Server::Fork';
+extends 'Net::Server::PreFork';
 
 has 'registred_user' => (
 	is       => 'rw',
