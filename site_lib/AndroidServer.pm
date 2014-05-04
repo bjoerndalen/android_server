@@ -7,8 +7,6 @@ use Testing::DAO::Group;
 use Testing::VarRegistry;
 use Testing::DAO::Student;
 
-# TODO Class of Android Server
-
 # input: hashref with group_id,	field, rows, page, sorted_type fields
 # output: hashref with count and items
 sub get_groups_list {

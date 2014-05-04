@@ -1,0 +1,10 @@
+150c150,152
+<     if( defined $status){
+---
+>     $admin_result = get_active_count();
+>     return $admin_result if (!$admin_result->{success});
+>     if($status && ($admin_result->{result} > 1)){
+167c169
+<     return {success => 0, error => 'Sorry but there is only one active admin'} if (get_active_count()->{result} == 1);
+---
+>     return {success => 0, error => 'Sorry but there is only one active admin'} if (get_active_count() == 1);
