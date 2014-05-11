@@ -223,4 +223,16 @@ sub edit_stud_passwd {
 	return $result;
 }
 
+sub get_student_count {
+	my ( $self, $params ) = @_;
+	if ( defined $params->{group_id} ) {
+		my $result =  Testing::DAO::Group::find_by_id( $params->{group_id} );
+		if ($result->{success}) {
+			return {success => 1, result => $result->{result}->students()->count()};
+		}
+		return $result;
+	}
+	return Testing::DAO::Student::get_count();
+}
+
 1;
