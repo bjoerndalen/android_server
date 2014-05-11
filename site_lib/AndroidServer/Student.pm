@@ -11,7 +11,7 @@ use Testing::DAO::AssignedTestStatus;
 
 extends 'AndroidServer';
 
-sub get_assgned_test_details {
+sub get_assigned_test {
 	my ( $self, $params ) = @_;
 	my $i_test      = $params->{test_id};
 	my $test_result = Testing::DAO::Test::find_by_id($i_test);
