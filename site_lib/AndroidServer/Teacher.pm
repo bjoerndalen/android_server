@@ -236,6 +236,7 @@ sub get_question_list {
 	  ? Testing::DAO::Category::get_question_count(
 		$result->{result}->i_category() )->{result}
 	  : 0;
+	$params->{category_id} = $params->{i_category};
 	my @page_data_array;
 	my $questions_result =
 	  Testing::DAO::Question::get_questions_by_category($params);
@@ -340,11 +341,7 @@ sub edit_category {
 	my $result;
 	if ( defined $category_name ) {
 		unless ($i_category) {
-			my $add = Testing::DAO::Category::add(
-				{
-					teacher_id    => $params->{teacher_id},
-					category_name => $category_name
-				}
+			my $add = Testing::DAO::Category::add($params
 			);
 			$result = $add;
 			if ( $add->{success} ) {
@@ -355,12 +352,7 @@ sub edit_category {
 			}
 		}
 		else {
-			my $edit = Testing::DAO::Category::edit(
-				{
-					id            => $i_category,
-					category_name => $category_name,
-				}
-			);
+			my $edit = Testing::DAO::Category::edit($params);
 			$result = $edit;
 			Testing::VarRegistry::add_error( $edit->{error} )
 			  unless $edit->{success};
